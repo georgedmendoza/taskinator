@@ -57,6 +57,23 @@ var createTaskEl = function(taskDataObj) {
     var taskActionEl = createTaskActions(taskIdCounter);
     listItemEl.appendChild(taskActionEl);
 
+    switch (taskDataObj.status) {
+        case "to do":
+          taskActionsEl.querySelector("select[name='status-change']").selectedIndex = 0;
+          tasksToDoEl.append(listItemEl);
+          break;
+        case "in progress":
+          taskActionsEl.querySelector("select[name='status-change']").selectedIndex = 1;
+          tasksInProgressEl.append(listItemEl);
+          break;
+        case "completed":
+          taskActionsEl.querySelector("select[name='status-change']").selectedIndex = 2;
+          tasksCompletedEl.append(listItemEl);
+          break;
+        default:
+          console.log("Something went wrong!");
+      }
+
     taskDataObj.id = taskIdCounter;
     tasks.push(taskDataObj);
     //add entire list item to list
@@ -223,5 +240,23 @@ var saveTasks = function() {
     localStorage.setItem("tasks",JSON.stringify(tasks));
 }
 
+// var updatedTasks = []
+
+var loadTasks = function() {
+    var newTasks = localStorage.getItem("tasks");
+    
+    if(!newTasks) {
+        return false
+    };
+
+    newTasks = JSON.parse(newTasks);
+
+    for (var i=0; i<newTasks.length; i++) {
+        createTaskEl(newTasks[i]);
+    }
+}
+
 pageContentEl.addEventListener("click",taskButtonHandler);
 pageContentEl.addEventListener("change",taskStatusChangeHandler);
+
+loadTasks();
